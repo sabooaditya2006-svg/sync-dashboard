@@ -68,10 +68,11 @@ function SyncSlider({ value, onChange }: { value: number; onChange: (n: number) 
           height: 20px;
           border-radius: 50%;
           background: var(--primary);
-          border: 3px solid var(--border);
-          box-shadow: 0 0 0 3px rgba(0,0,0,0.03);
+          border: 2px solid var(--primary);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.05);
           margin-top: -6px; /* vertically center the thumb over the track */
           cursor: pointer;
+          transition: colors;
         }
 
         /* Firefox */
@@ -80,8 +81,8 @@ function SyncSlider({ value, onChange }: { value: number; onChange: (n: number) 
           height: 20px;
           border-radius: 50%;
           background: var(--primary);
-          border: 3px solid var(--border);
-          box-shadow: 0 0 0 3px rgba(0,0,0,0.03);
+          border: 2px solid var(--primary);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.05);
           cursor: pointer;
         }
 
@@ -91,8 +92,8 @@ function SyncSlider({ value, onChange }: { value: number; onChange: (n: number) 
           height: 20px;
           border-radius: 50%;
           background: var(--primary);
-          border: 3px solid var(--border);
-          box-shadow: 0 0 0 3px rgba(0,0,0,0.03);
+          border: 2px solid var(--primary);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.05);
           cursor: pointer;
         }
       `}</style>
