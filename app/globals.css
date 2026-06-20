@@ -1,63 +1,47 @@
-:root {
-  color-scheme: light dark;
-  /* Palette Constants */
-  --bg-val: #fdfbf7;
-  --fg-val: #34384a;
-  --acc-val: #f8c5c1;
-  --acc-fg-val: #4a2e2c;
-
-  --background: var(--bg-val);
-  --foreground: var(--fg-val);
+:root, .dark, @media (prefers-color-scheme: dark) {
+  /* Applying the custom palette globally */
+  --background: #fdfbf7;
+  --foreground: #34384a;
+  
   --card: #ffffff;
-  --card-foreground: var(--fg-val);
+  --card-foreground: #34384a;
+  
   --popover: #ffffff;
-  --popover-foreground: var(--fg-val);
-  --primary: var(--acc-val);
-  --primary-foreground: var(--acc-fg-val);
+  --popover-foreground: #34384a;
+  
+  --primary: #f8c5c1;
+  --primary-foreground: #4a2e2c;
+  
   --secondary: #f6efe6;
-  --secondary-foreground: var(--fg-val);
+  --secondary-foreground: #34384a;
+  
   --muted: #f4eee5;
   --muted-foreground: #8a8577;
-  --accent: var(--acc-val);
-  --accent-foreground: var(--acc-fg-val);
+  
+  --accent: #f8c5c1;
+  --accent-foreground: #4a2e2c;
+  
   --destructive: #d98b84;
   --border: #ece4d7;
   --input: #ece4d7;
-  --ring: var(--acc-val);
-  --chart-1: var(--acc-val);
+  --ring: #f8c5c1;
+  
+  /* Charts */
+  --chart-1: #f8c5c1;
   --chart-2: #e8b4ae;
   --chart-3: #c9a98f;
   --chart-4: #9bb0a5;
   --chart-5: #8a8fae;
+  
   --radius: 1rem;
+  
+  /* Sidebar */
   --sidebar: #ffffff;
-  --sidebar-foreground: var(--fg-val);
-  --sidebar-primary: var(--acc-val);
-  --sidebar-primary-foreground: var(--acc-fg-val);
+  --sidebar-foreground: #34384a;
+  --sidebar-primary: #f8c5c1;
+  --sidebar-primary-foreground: #4a2e2c;
   --sidebar-accent: #faddd9;
-  --sidebar-accent-foreground: var(--acc-fg-val);
+  --sidebar-accent-foreground: #4a2e2c;
   --sidebar-border: #f0e9dd;
-  --sidebar-ring: var(--acc-val);
-}
-
-/* Force light mode variables even if dark mode is toggled */
-.dark {
-  --background: var(--bg-val);
-  --foreground: var(--fg-val);
-  --card: #ffffff;
-  --card-foreground: var(--fg-val);
-  --popover: #ffffff;
-  --popover-foreground: var(--fg-val);
-  --primary: var(--acc-val);
-  --primary-foreground: var(--acc-fg-val);
-  --secondary: #f6efe6;
-  --secondary-foreground: var(--fg-val);
-  --muted: #f4eee5;
-  --muted-foreground: #8a8577;
-  --accent: var(--acc-val);
-  --accent-foreground: var(--acc-fg-val);
-  --sidebar: #ffffff;
-  --sidebar-foreground: var(--fg-val);
-  --sidebar-accent: #faddd9;
-  --sidebar-accent-foreground: var(--acc-fg-val);
+  --sidebar-ring: #f8c5c1;
 }
