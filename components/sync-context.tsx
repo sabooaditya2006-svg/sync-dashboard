@@ -25,10 +25,25 @@ export type Medication = {
   id: string
   name: string
   dosage: string
-  time: string
+  times: string[] // Changed from 'time' to an array of times
   frequency: number
   takenCount: number
 }
+
+// In your SyncProvider:
+const addMedication = (m: Omit<Medication, "id" | "takenCount">) =>
+  setMedications((prev) => [...prev, { ...m, id: `med-${Date.now()}`, takenCount: 0 }])
+
+const toggleMedTaken = (id: string) =>
+  setMedications((prev) =>
+    prev.map((m) => {
+      if (m.id === id) {
+        const nextCount = m.takenCount >= m.frequency ? 0 : m.takenCount + 1
+        return { ...m, takenCount: nextCount }
+      }
+      return m
+    })
+  )
 
 export type ChatMessage = {
   id: string
