@@ -6,6 +6,8 @@ import { ProgressRing, SectionCard } from "@/components/sync-ui"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { CalendarDays, Droplets, GlassWater, Scale } from "lucide-react"
+import { DayPicker } from "react-day-picker"
+import "react-day-picker/dist/style.css"
 import {
   CartesianGrid,
   Line,
@@ -18,14 +20,14 @@ import {
 
 export function CycleTracker() {
   const { periodDays, togglePeriodDay, profile } = useSync()
-  const days = Array.from({ length: 30 }, (_, i) => i + 1)
-
-  // current phase from tracked days
+  // This state tracks which month the calendar is currently displaying
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
+  
   const target = Number(profile?.cycleLength) || 28
   let phase = "Follicular phase"
   if (periodDays.length > 0) {
     const last = Math.max(...periodDays)
-    const today = 30
+    const today = new Date().getDate()
     const sinceFlow = today - last
     if (periodDays.includes(today) || sinceFlow <= 1) phase = "Menstrual phase"
     else if (sinceFlow <= 9) phase = "Follicular phase"
@@ -33,7 +35,6 @@ export function CycleTracker() {
     else phase = "Luteal phase"
   }
 
-  // simulated horizon
   const horizon = [
     { month: "Apr", length: 31 },
     { month: "May", length: 34 },
@@ -42,35 +43,32 @@ export function CycleTracker() {
     { month: "Aug", length: target + (periodDays.length > 6 ? 7 : periodDays.length) },
   ]
 
+  // This perfectly prevents the "June 31 turning into July 1" bug
+  const selectedDates = periodDays.map(day => {
+    const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+    // If the month rolled over (e.g. day 31 in a 30-day month), ignore it for this view
+    if (d.getMonth() !== currentMonth.getMonth()) return undefined;
+    return d;
+  }).filter((d): d is Date => d !== undefined)
+
   return (
     <SectionCard
       title="Menstrual Cycle — Calendar Tracker"
-      subtitle="Tap days to mark active period flow"
+      subtitle="Tap any date to toggle period flow"
       icon={<CalendarDays className="size-5" />}
     >
-      <div className="grid grid-cols-7 gap-1.5">
-        {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-          <span key={i} className="pb-1 text-center text-xs font-medium text-muted-foreground">
-            {d}
-          </span>
-        ))}
-        {days.map((day) => {
-          const active = periodDays.includes(day)
-          return (
-            <button
-              key={day}
-              onClick={() => togglePeriodDay(day)}
-              className={cn(
-                "flex aspect-square items-center justify-center rounded-xl text-sm transition",
-                active
-                  ? "bg-primary font-semibold text-primary-foreground shadow-sm"
-                  : "bg-secondary/50 text-muted-foreground hover:bg-accent/60 hover:text-accent-foreground",
-              )}
-            >
-              {day}
-            </button>
-          )
-        })}
+      <div className="flex justify-center py-2">
+        <DayPicker
+          mode="multiple"
+          // We remove showOutsideDays to hide the confusing days from previous/next months
+          month={currentMonth}
+          onMonthChange={setCurrentMonth}
+          selected={selectedDates}
+          onSelect={(_, selectedDay) => {
+            togglePeriodDay(selectedDay.getDate());
+          }}
+          className="rounded-xl border border-border p-3"
+        />
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl bg-secondary/50 px-4 py-3 text-sm">
@@ -90,22 +88,8 @@ export function CycleTracker() {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} />
               <YAxis stroke="var(--muted-foreground)" fontSize={12} tickLine={false} domain={[24, 40]} />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: 12,
-                  border: "1px solid var(--border)",
-                  background: "var(--card)",
-                  fontSize: 12,
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="length"
-                stroke="var(--primary)"
-                strokeWidth={3}
-                dot={{ r: 4, fill: "var(--primary)" }}
-                activeDot={{ r: 6 }}
-              />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--border)", background: "var(--card)", fontSize: 12 }} />
+              <Line type="monotone" dataKey="length" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4, fill: "var(--primary)" }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -141,9 +125,7 @@ export function WeightTracker() {
           placeholder="Log today's weight (kg)"
           className="flex-1 rounded-2xl border border-border bg-secondary/40 px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
         />
-        <Button onClick={submit} className="rounded-2xl px-5">
-          Add Data
-        </Button>
+        <Button onClick={submit} className="rounded-2xl px-5">Add Data</Button>
       </div>
       <div className="mt-4 h-48 w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -151,22 +133,8 @@ export function WeightTracker() {
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis dataKey="label" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} />
             <YAxis stroke="var(--muted-foreground)" fontSize={12} tickLine={false} domain={["dataMin - 1", "dataMax + 1"]} />
-            <Tooltip
-              contentStyle={{
-                borderRadius: 12,
-                border: "1px solid var(--border)",
-                background: "var(--card)",
-                fontSize: 12,
-              }}
-            />
-            <Line
-              type="monotone"
-              dataKey="kg"
-              stroke="var(--primary)"
-              strokeWidth={3}
-              dot={{ r: 4, fill: "var(--primary)" }}
-              activeDot={{ r: 6 }}
-            />
+            <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--border)", background: "var(--card)", fontSize: 12 }} />
+            <Line type="monotone" dataKey="kg" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4, fill: "var(--primary)" }} activeDot={{ r: 6 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -199,13 +167,7 @@ export function WaterTracker() {
                 className="flex flex-col items-center gap-1"
                 aria-label={`Glass ${i + 1}`}
               >
-                <GlassWater
-                  className={cn(
-                    "size-9 transition-colors",
-                    filled ? "text-primary" : "text-border",
-                  )}
-                  fill={filled ? "var(--accent)" : "transparent"}
-                />
+                <GlassWater className={cn("size-9 transition-colors", filled ? "text-primary" : "text-border")} fill={filled ? "var(--accent)" : "transparent"} />
                 <span className="text-xs text-muted-foreground">{i + 1}</span>
               </button>
             )
