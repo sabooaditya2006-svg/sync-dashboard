@@ -31,7 +31,7 @@ function SyncSlider({ value, onChange }: { value: number; onChange: (n: number) 
         }}
       />
 
-      {/* Marker row: 10 circles with borders so users can see all stops */}
+      {/* Marker row: 10 circles with visible borders */}
       <div className="mt-3 flex items-center justify-between px-1">
         {markers.map((m) => (
           <span
@@ -40,7 +40,7 @@ function SyncSlider({ value, onChange }: { value: number; onChange: (n: number) 
               "inline-block h-4 w-4 rounded-full border-2 transition-colors",
               m <= val
                 ? "bg-primary border-primary"
-                : "bg-card border-border",
+                : "bg-card border-primary",
             )}
           />
         ))}
