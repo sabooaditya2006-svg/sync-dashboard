@@ -165,13 +165,29 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     setMessages((prev) => [...prev, { id: `u-${base}`, role: "user", text: userText }, { id: `s-${base}`, role: "sync", text: answer }])
   }
 
-  const pillarProgress = useMemo(() => ({ nutrition: 0, mental: 0, exercise: 0, sleep: 0 }), []) 
-  const pillarsWon = 0
-  const masterProgress = 0
-  const quizAnsweredCount = Object.keys(quizAnswers).length
-  const hasBaseline = quizAnsweredCount >= 5
-  const riskScore = 0
-  const riskLabel = "Low"
+  // --- Updated Dynamic Progress Logic ---
+  const pillarProgress = useMemo(() => {
+    const nutritionScore = (nutrition.stroll ? 33 : 0) + (nutrition.protein ? 33 : 0) + (nutrition.alarm ? 34 : 0);
+    const exerciseScore = Math.round((exerciseChecked.filter(Boolean).length / EXERCISE_ITEMS.length) * 100);
+    const sleepScore = Math.round((sleepChecked.filter(Boolean).length / SLEEP_ITEMS.length) * 100);
+    
+    return { 
+      nutrition: nutritionScore, 
+      mental: 0, 
+      exercise: exerciseScore, 
+      sleep: sleepScore 
+    };
+  }, [nutrition, exerciseChecked, sleepChecked]);
+
+  const pillarsWon = Object.values(pillarProgress).filter(p => p >= 100).length;
+  const masterProgress = Math.round(
+    (pillarProgress.nutrition + pillarProgress.mental + pillarProgress.exercise + pillarProgress.sleep) / 4
+  );
+
+  const quizAnsweredCount = Object.keys(quizAnswers).length;
+  const hasBaseline = quizAnsweredCount >= 5;
+  const riskScore = 0;
+  const riskLabel = "Low";
 
   const value: SyncContextValue = {
     profile, setProfile, onboarded, completeOnboarding, skipped, setSkipped, view, setView,
