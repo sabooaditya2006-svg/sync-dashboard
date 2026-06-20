@@ -20,8 +20,9 @@ import {
 
 export function CycleTracker() {
   const { periodDays, togglePeriodDay, profile } = useSync()
+  // This state tracks which month the calendar is currently displaying
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
   
-  // Calculate phase logic
   const target = Number(profile?.cycleLength) || 28
   let phase = "Follicular phase"
   if (periodDays.length > 0) {
@@ -42,6 +43,14 @@ export function CycleTracker() {
     { month: "Aug", length: target + (periodDays.length > 6 ? 7 : periodDays.length) },
   ]
 
+  // This perfectly prevents the "June 31 turning into July 1" bug
+  const selectedDates = periodDays.map(day => {
+    const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+    // If the month rolled over (e.g. day 31 in a 30-day month), ignore it for this view
+    if (d.getMonth() !== currentMonth.getMonth()) return undefined;
+    return d;
+  }).filter((d): d is Date => d !== undefined)
+
   return (
     <SectionCard
       title="Menstrual Cycle — Calendar Tracker"
@@ -51,10 +60,10 @@ export function CycleTracker() {
       <div className="flex justify-center py-2">
         <DayPicker
           mode="multiple"
-          showOutsideDays={true}
-          selected={periodDays.map(day => {
-            const d = new Date(); d.setDate(day); return d;
-          })}
+          // We remove showOutsideDays to hide the confusing days from previous/next months
+          month={currentMonth}
+          onMonthChange={setCurrentMonth}
+          selected={selectedDates}
           onSelect={(_, selectedDay) => {
             togglePeriodDay(selectedDay.getDate());
           }}
