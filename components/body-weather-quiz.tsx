@@ -4,6 +4,7 @@ import { QUIZ_CATEGORIES, QUIZ_QUESTIONS } from "@/lib/sync-data"
 import { useSync } from "@/components/sync-context"
 import { SelectorPill } from "@/components/sync-ui"
 import { Apple, Brain, Dumbbell, Moon } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 const CATEGORY_ICON: Record<string, React.ReactNode> = {
   Nutrition: <Apple className="size-4" />,
@@ -13,20 +14,39 @@ const CATEGORY_ICON: Record<string, React.ReactNode> = {
 }
 
 function SyncSlider({ value, onChange }: { value: number; onChange: (n: number) => void }) {
+  const val = value || 5
+  const markers = Array.from({ length: 10 }, (_, i) => i + 1)
+
   return (
     <div className="mt-2">
       <input
         type="range"
         min={1}
         max={10}
-        value={value || 5}
+        value={val}
         onChange={(e) => onChange(Number(e.target.value))}
         className="sync-slider h-2 w-full cursor-pointer appearance-none rounded-full bg-secondary accent-primary"
         style={{
-          background: `linear-gradient(to right, var(--primary) 0%, var(--primary) ${((value || 5) - 1) * 11.1}%, var(--secondary) ${((value || 5) - 1) * 11.1}%, var(--secondary) 100%)`,
+          background: `linear-gradient(to right, var(--primary) 0%, var(--primary) ${((val || 5) - 1) * 11.1}%, var(--secondary) ${((val || 5) - 1) * 11.1}%, var(--secondary) 100%)`,
         }}
       />
-      <div className="mt-1 flex justify-between text-xs text-muted-foreground">
+
+      {/* Marker row: 10 circles with borders so users can see all stops */}
+      <div className="mt-3 flex items-center justify-between px-1">
+        {markers.map((m) => (
+          <span
+            key={m}
+            className={cn(
+              "inline-block h-4 w-4 rounded-full border-2 transition-colors",
+              m <= val
+                ? "bg-primary border-primary"
+                : "bg-card border-border",
+            )}
+          />
+        ))}
+      </div>
+
+      <div className="mt-2 flex justify-between text-xs text-muted-foreground">
         <span>1</span>
         <span className="font-semibold text-foreground">Selected: {value || "—"}</span>
         <span>10</span>
