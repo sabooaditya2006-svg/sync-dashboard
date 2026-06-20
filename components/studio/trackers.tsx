@@ -21,7 +21,6 @@ import {
 export function CycleTracker() {
   const { periodDays, togglePeriodDay, profile } = useSync()
   
-  // Calculate phase logic
   const target = Number(profile?.cycleLength) || 28
   let phase = "Follicular phase"
   if (periodDays.length > 0) {
@@ -79,22 +78,8 @@ export function CycleTracker() {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} />
               <YAxis stroke="var(--muted-foreground)" fontSize={12} tickLine={false} domain={[24, 40]} />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: 12,
-                  border: "1px solid var(--border)",
-                  background: "var(--card)",
-                  fontSize: 12,
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="length"
-                stroke="var(--primary)"
-                strokeWidth={3}
-                dot={{ r: 4, fill: "var(--primary)" }}
-                activeDot={{ r: 6 }}
-              />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--border)", background: "var(--card)", fontSize: 12 }} />
+              <Line type="monotone" dataKey="length" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4, fill: "var(--primary)" }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -103,4 +88,82 @@ export function CycleTracker() {
   )
 }
 
-// ... Keep your existing WeightTracker and WaterTracker functions below ...
+export function WeightTracker() {
+  const { weightLogs, addWeight } = useSync()
+  const [input, setInput] = useState("")
+
+  const submit = () => {
+    const kg = Number.parseFloat(input)
+    if (!Number.isNaN(kg) && kg > 0) {
+      addWeight(kg)
+      setInput("")
+    }
+  }
+
+  return (
+    <SectionCard
+      title="Weight Tracker"
+      subtitle="Catch metabolic pattern shifts"
+      icon={<Scale className="size-5" />}
+    >
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && submit()}
+          placeholder="Log today's weight (kg)"
+          className="flex-1 rounded-2xl border border-border bg-secondary/40 px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+        />
+        <Button onClick={submit} className="rounded-2xl px-5">Add Data</Button>
+      </div>
+      <div className="mt-4 h-48 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={weightLogs} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <XAxis dataKey="label" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} />
+            <YAxis stroke="var(--muted-foreground)" fontSize={12} tickLine={false} domain={["dataMin - 1", "dataMax + 1"]} />
+            <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--border)", background: "var(--card)", fontSize: 12 }} />
+            <Line type="monotone" dataKey="kg" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4, fill: "var(--primary)" }} activeDot={{ r: 6 }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </SectionCard>
+  )
+}
+
+export function WaterTracker() {
+  const { water, setWater } = useSync()
+  const goal = 8
+  const pct = Math.round((water / goal) * 100)
+
+  return (
+    <SectionCard
+      title="Water Intake"
+      subtitle="Stay gently hydrated"
+      icon={<Droplets className="size-5" />}
+    >
+      <div className="grid items-center gap-6 sm:grid-cols-[auto_1fr]">
+        <div className="mx-auto">
+          <ProgressRing value={pct} size={120} label={`${pct}%`} sublabel="Hydrated" />
+        </div>
+        <div className="flex flex-wrap justify-center gap-3 sm:justify-start">
+          {Array.from({ length: goal }, (_, i) => {
+            const filled = i < water
+            return (
+              <button
+                key={i}
+                onClick={() => setWater(filled && i + 1 === water ? i : i + 1)}
+                className="flex flex-col items-center gap-1"
+                aria-label={`Glass ${i + 1}`}
+              >
+                <GlassWater className={cn("size-9 transition-colors", filled ? "text-primary" : "text-border")} fill={filled ? "var(--accent)" : "transparent"} />
+                <span className="text-xs text-muted-foreground">{i + 1}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </SectionCard>
+  )
+}
