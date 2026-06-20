@@ -1,47 +1,31 @@
-:root, .dark, @media (prefers-color-scheme: white) {
-  /* Applying the custom palette globally */
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* Add your other --color mappings here */
+}
+
+:root {
   --background: #fdfbf7;
   --foreground: #34384a;
-  
-  --card: #ffffff;
-  --card-foreground: #34384a;
-  
-  --popover: #ffffff;
-  --popover-foreground: #34384a;
-  
   --primary: #f8c5c1;
   --primary-foreground: #4a2e2c;
-  
-  --secondary: #f6efe6;
-  --secondary-foreground: #34384a;
-  
-  --muted: #f4eee5;
-  --muted-foreground: #8a8577;
-  
   --accent: #f8c5c1;
   --accent-foreground: #4a2e2c;
-  
-  --destructive: #d98b84;
   --border: #ece4d7;
-  --input: #ece4d7;
   --ring: #f8c5c1;
-  
-  /* Charts */
-  --chart-1: #f8c5c1;
-  --chart-2: #e8b4ae;
-  --chart-3: #c9a98f;
-  --chart-4: #9bb0a5;
-  --chart-5: #8a8fae;
-  
   --radius: 1rem;
-  
-  /* Sidebar */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #34384a;
-  --sidebar-primary: #f8c5c1;
-  --sidebar-primary-foreground: #4a2e2c;
-  --sidebar-accent: #faddd9;
-  --sidebar-accent-foreground: #4a2e2c;
-  --sidebar-border: #f0e9dd;
-  --sidebar-ring: #f8c5c1;
 }
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Add your animations and utilities below */
