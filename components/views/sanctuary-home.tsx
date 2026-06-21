@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { useSync } from "@/components/sync-context"
-import { ProgressRing, SectionCard } from "@/components/sync-ui"
+import { useSync } from "../sync-context"
+import { ProgressRing, SectionCard } from "../sync-ui"
 import { BoxBreathing } from "@/components/box-breathing"
 import { Button } from "@/components/ui/button"
 import { LITERACY_CARDS } from "@/lib/sync-data"
@@ -259,7 +259,7 @@ function NutritionPane() {
         </button>
         <div>
           <p className="mb-1.5 text-xs font-medium text-muted-foreground">
-            Identity resistance, in plain words (editable)
+            Insulin resistance, in plain words (editable)
           </p>
           <textarea
             value={insulinNote}
@@ -282,19 +282,14 @@ function MentalPane() {
     moodNote, 
     setMoodNote, 
     breathingCompleted, 
-    toggleBreathing 
+    completeBreathing 
   } = useSync()
 
   return (
     <Pane title="Mental Health" subtitle="A calmer nervous system" icon={<Brain className="size-5" />}>
       <div className="grid gap-5 md:grid-cols-2">
         <div className="flex flex-col gap-3">
-          <BoxBreathing />
-          <CheckRow 
-            label="Complete 3-Minute Box Breathing Session" 
-            checked={breathingCompleted} 
-            onToggle={toggleBreathing} 
-          />
+          <BoxBreathing onComplete={completeBreathing} isCompleted={breathingCompleted} />
         </div>
         <div className="space-y-4">
           <div>

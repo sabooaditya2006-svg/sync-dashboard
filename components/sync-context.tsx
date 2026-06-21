@@ -73,7 +73,7 @@ type SyncContextValue = {
   journalSaved: boolean
   saveJournal: () => void
   breathingCompleted: boolean
-  toggleBreathing: () => void
+  completeBreathing: () => void
   moodNote: string
   setMoodNote: (s: string) => void
   exerciseItems: string[]
@@ -148,7 +148,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   const completeOnboarding = () => setOnboarded(true)
   const toggleNutrition = (key: "stroll" | "protein" | "alarm") => setNutrition((prev) => ({ ...prev, [key]: !prev[key] }))
   const saveJournal = () => setJournalSaved(true)
-  const toggleBreathing = () => setBreathingCompleted((prev) => !prev)
+  const completeBreathing = () => setBreathingCompleted(true)
   const toggleExercise = (i: number) => setExerciseChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)))
   const toggleSleep = (i: number) => setSleepChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)))
   const setQuizAnswer = (id: number, value: string | number) => setQuizAnswers((prev) => ({ ...prev, [id]: value }))
@@ -167,13 +167,10 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     setMessages((prev) => [...prev, { id: `u-${base}`, role: "user", text: userText }, { id: `s-${base}`, role: "sync", text: answer }])
   }
 
-  // --- Dynamic Progress Logic ---
   const pillarProgress = useMemo(() => {
     const nutritionScore = (nutrition.stroll ? 33 : 0) + (nutrition.protein ? 33 : 0) + (nutrition.alarm ? 34 : 0);
     const exerciseScore = Math.round((exerciseChecked.filter(Boolean).length / EXERCISE_ITEMS.length) * 100);
     const sleepScore = Math.round((sleepChecked.filter(Boolean).length / SLEEP_ITEMS.length) * 100);
-    
-    // Mental Health pillar: 50% for Journal Note, 50% for completing 3-Min Breathing
     const mentalScore = (journalSaved ? 50 : 0) + (breathingCompleted ? 50 : 0);
     
     return { 
@@ -197,7 +194,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   const value: SyncContextValue = {
     profile, setProfile, onboarded, completeOnboarding, skipped, setSkipped, view, setView,
     nutrition, toggleNutrition, insulinNote, setInsulinNote, journal, setJournal, journalSaved, saveJournal,
-    breathingCompleted, toggleBreathing, moodNote, setMoodNote, exerciseItems: EXERCISE_ITEMS, exerciseChecked, 
+    breathingCompleted, completeBreathing, moodNote, setMoodNote, exerciseItems: EXERCISE_ITEMS, exerciseChecked, 
     toggleExercise, sleepItems: SLEEP_ITEMS, sleepChecked, toggleSleep, pillarProgress, pillarsWon, 
     masterProgress, quizAnswers, setQuizAnswer, quizSubmitted, submitQuiz, quizAnsweredCount, periodDays, 
     togglePeriodDay, weightLogs, addWeight, water, setWater, symptoms, setSymptom, riskScore, riskLabel, 
