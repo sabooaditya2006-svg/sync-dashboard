@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { SPECIALISTS } from "@/lib/sync-data"
 import { cn } from "@/lib/utils"
 import { Pill, Send, Shield, ShieldCheck, Star, Stethoscope, Trash2, RotateCcw } from "lucide-react"
-import { specialistsData } from './specialistsData';
+import { specialistsData } from '../specialistsData';
 function MedicationTimeline() {
   const { medications, toggleMedTaken, resetMedication } = useSync()
   
